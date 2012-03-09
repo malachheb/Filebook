@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(:version => 20120302104607) do
     t.string   "data_file_name"
     t.string   "extension"
     t.string   "tags"
+    t.string   "description"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
   end

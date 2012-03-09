@@ -8,6 +8,7 @@ class CreateFichiers < ActiveRecord::Migration
       t.string :data_content_type
       t.integer :data_file_size
       t.string :tags
+      t.string :description
 
       t.timestamps
     end

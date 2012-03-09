@@ -18,6 +18,7 @@ class FichiersController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.json { render :json => @fichier }
+      format.js {render :action => "show"}
     end
   end
 

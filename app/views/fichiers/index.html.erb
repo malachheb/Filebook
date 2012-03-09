@@ -27,7 +27,7 @@
     <td><%= fichier.data_content_type %></td>
     <td><%= fichier.data_file_size %></td>
     <td><%= fichier.updated_at %></td>
-    <td><%= link_to '<i class="icon-eye-open"/>'.html_safe , fichier, :class => '' %></td>
+    <td><%= link_to '<i class="icon-eye-open"/>'.html_safe , fichier, :class => '', :remote => true %></td>
     <td><%= link_to '<i class="icon-pencil"/>'.html_safe, edit_fichier_path(fichier), :id => 'edit_file', :remote => true %></td>
     <td><%= link_to '<i class="icon-trash"/>'.html_safe, fichier, :confirm => 'Are you sure?', :method => :delete, :remote=>true, :id => 'delete_fichier' %></td>
   </tr>

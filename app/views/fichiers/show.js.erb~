@@ -1,0 +1,3 @@
+ 
+ $('div#file_modal').html("<%= escape_javascript(render :partial => 'form') %>");
+ $('div#file_modal').modal('hide');
