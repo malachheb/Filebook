@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Filebook</title>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<%= render :partial => '/layouts/nav' %>
+<div class="app_top">
+  <div class="header"></div>
+  <div class="main_content">
+  <%= yield %>
+  </div>
+</div>
+<div class="app_bottom"></div>
+<div class="footer"> Powred by malachheb</div>
+
+</body>
+</html>

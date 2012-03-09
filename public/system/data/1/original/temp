@@ -1,0 +1,312 @@
+# -*- coding: utf-8 -*-
+
+ENV['RACK_ENV'] ||= 'test'
+require File.dirname(__FILE__)+'/spec_helper'
+require File.dirname(__FILE__)+'/../app'
+ 
+require 'grid5000'
+ 
+def app
+  Grid5000::UsersAPI
+end
+
+describe Grid5000::UsersAPI do
+  include AccountHelpers
+  
+  before do
+    @now = Time.now
+    Time.stub!(:now).and_return(@now)
+    populate
+  end
+
+   describe "quotas management" do
+    before do      
+      @valid_headers = {
+        'HTTP_ACCEPT' => 'application/json', 
+        'CONTENT_TYPE' => 'application/json',
+        'HTTP_X_API_USER_CN' => 'crohr', 
+        'HTTP_X_API_USER_PRIVILEGES' => 'admin'
+      }
+      @valid_authentication_headers = @valid_headers.merge({
+                'HTTP_X_API_USER_PRIVILEGES' => 'admin',
+                'HTTP_X_API_USER_CN' => 'dmargery'
+              })
+              
+      @valid_attributes = {
+        :user_uid => @crohr.uid,
+        :site_uid => "rennes",
+        :volume_uid => "homedir",
+        :quota_soft => 50000000,
+        :quota_hard => 125000000,
+        :created_at => @now.to_i,
+        :expires_at => @now.to_i + (3600*24*3),
+        :updated_at => @now.to_i,
+        :request_motivation => "a test motivation",
+        :type_extension => "not_permanent",
+        :manager_comment => "manager comment test"
+      }
+    end
+    
+
+    describe "GET /users/:user_uid/quotas" do
+      describe "with no request in DB" do
+       it "should return an empty list" do
+         get('/users/crohr/quotas', {}, @valid_headers)
+         last_response.status.should == 200
+         result = JSON.parse(last_response.body)
+         result.should == []
+       end
+      end
+     
+      describe "with quota requests in DB" do 
+      
+        before do 
+          @crohr_nancy = Grid5000::Quota.create(@valid_attributes.merge(:site_uid => "nancy"))
+          @crohr_grenoble = Grid5000::Quota.create(@valid_attributes.merge(:site_uid => "grenoble"))
+          @bdexheimer_rennes = Grid5000::Quota.create(@valid_attributes.merge(:user_uid => @bdexheimer.uid))
+        end
+        
+        it "should return 404 if the user not exist" do
+            get('/users/guest_user/quotas', {}, @valid_headers)
+            last_response.status.should == 404
+        end
+        
+        it "should return the list of quotas requests" do
+          get('/users/dmargery/quotas?managed=true', {}, @valid_headers)
+          last_response.status.should == 200
+          result = JSON.parse(last_response.body)
+          result.length.should == 3
+        end
+        it "should return the list of quotas requests filtred by site_uid" do
+        get('/users/crohr/quotas?site_uid=nancy&managed=true', {}, @valid_headers.merge(:HTTP_X_API_USER_PRIVILEGES => 'site-manager'))
+          last_response.status.should == 200
+          result = JSON.parse(last_response.body)
+          result.length.should == 1
+          result[0]['site_uid'].should == 'nancy'
+        end      
+        it "should return the list of quotas requests filtred by user_uid" do
+          get("users/bdexheimer/quotas", {}, @valid_headers)
+          last_response.status.should == 200
+          result = JSON.parse(last_response.body)
+          result.length.should == 1
+          result[0]['user_uid'].should == 'bdexheimer'
+        end        
+        it "should return the list of quotas requests filtred by status" do
+          Grid5000::Quota.find(:user_uid => 'bdexheimer').approve!
+          get('users/crohr/quotas?status=APPROVED&managed=true', {}, @valid_headers)
+          last_response.status.should == 200
+          result = JSON.parse(last_response.body)
+          result.length.should == 1
+          result[0]['status'].should == 'APPROVED'
+        end      
+        it "should return the list of quotas request whose expiration date is defined and in the interval [expires_before, expires_after]" do
+            time_expires = @crohr_nancy.expires_at.to_i;
+            @crohr_nancy.update(:expires_at => time_expires+15)
+            @bdexheimer_rennes.update(:expires_at => time_expires+18)
+            
+            get("users/dmargery/quotas?managed=true&expires_after=#{time_expires+10}&expires_before=#{time_expires+20}", {}, @valid_headers)
+            last_response.status.should == 200
+            result = JSON.parse(last_response.body)
+            result.length.should == 2
+            result.map{|i| i['user_uid']}.should == ["crohr", "bdexheimer"]
+         end 
+       
+         it "should return the list of quotas requests managed by the current user" do
+          get('users/orichard/quotas?managed=true', {}, @valid_headers.merge('HTTP_X_API_USER_PRIVILEGES' => 'site-manager'))
+          last_response.status.should == 200
+          result = JSON.parse(last_response.body)
+          result.length.should == 1
+          result[0]['site_uid']== @orichard.site_uid
+        end
+        
+      end
+   end
+       
+    describe "POST /users/:user_uid/quotas" do
+      
+      it "should return 415 if the Content-Type of the data is not supported" do
+        post('/users/crohr/quotas', "<whatever></whatever>", @valid_headers.merge('CONTENT_TYPE' => 'application/xml'))
+        last_response.status.should == 415
+        last_response.headers['Content-Type'].should == 'application/json'
+        JSON.parse(last_response.body).should == {"code"=>415, "title"=>"Unsupported Media Type", "message"=>"Format application/xml not supported"}
+      end
+      it "should return 400 if the posted data is empty" do
+        post('/users/crohr/quotas', "", @valid_headers)
+        last_response.status.should == 400
+      end
+      it "should return 400 if the posted data is invalid JSON" do
+        post('/users/crohr/quotas', "%€@)", @valid_headers)
+        last_response.status.should == 400
+      end      
+      it "should return 403 if the access is refused" do
+        post("/users/crohr/quotas", @valid_attributes.to_json, @valid_headers.merge('HTTP_X_API_USER_PRIVILEGES' => 'guest'))
+        last_response.status.should == 403
+        JSON.parse(last_response.body).should == {"code"=>403, "title"=>"Forbidden", "message"=>"Insufficient privileges for creation"}
+      end 
+      it "should return 403 if the requester is different for user" do
+        post("/users/orichard/quotas", @valid_attributes.to_json, @valid_headers.merge('HTTP_X_API_USER_PRIVILEGES' => 'user'))
+        last_response.status.should == 403
+        JSON.parse(last_response.body).should == {"code"=>403, "title"=>"Forbidden", "message"=>"Insufficient privileges for creation"}
+      end      
+      it "should return Not Found (404) if user does not exist" do
+        post('/users/userdoesnotexist/quotas', @valid_attributes.to_json, @valid_headers)
+        last_response.status.should == 404
+        JSON.parse(last_response.body).should == {
+          "code" => 404, 
+          "title" => "Not Found", 
+          "message" => "Object not found (User userdoesnotexist)"
+        }
+      end 
+      it "should created quota request" do
+       post("/users/crohr/quotas", @valid_attributes.to_json, @valid_headers)
+       last_response.status.should == 200
+      end
+
+    end
+    
+    describe "PUT /users/:user_uid/quotas" do
+      before do
+        @crohr_rennes = Grid5000::Quota.create(@valid_attributes)
+      end      
+      it "should return 404 if the quota request does not exist" do
+        put('/users/crohr/quotas/5036', @valid_attributes.to_json, @valid_headers)
+        last_response.status.should == 404
+        JSON.parse(last_response.body).should == {"code"=>404, "title"=>"Not Found", "message"=>"Object not found (Request 5036)"}
+      end
+      it "should return Not Found (404) if user does not exist" do
+        post("/users/userdoesnotexist/quotas/#{@crohr_rennes.uid}", @valid_attributes.to_json, @valid_headers)
+        last_response.status.should == 404
+        JSON.parse(last_response.body).should == {
+          "code" => 404, 
+          "title" => "Not Found", 
+          "message" => "<h1>Not Found</h1>"
+        }
+      end 
+      it "should return 403 if the access is refused" do
+        put("/users/crohr/quotas/#{@crohr_rennes.uid}", @valid_attributes.to_json, @valid_headers.merge('HTTP_X_API_USER_PRIVILEGES' => 'guest'))
+        last_response.status.should == 403
+        JSON.parse(last_response.body).should == {"code"=>403, "title"=>"Forbidden", "message"=>"Insufficient privileges for update"}
+      end
+      it "should return 400 if updated request is invalid" do
+        put("/users/crohr/quotas/#{@crohr_rennes.uid}", {:user_uid =>"crohr", :site_uid => "rennes", :quota_soft => ""}.to_json, @valid_headers)
+        last_response.status.should == 400
+        JSON.parse(last_response.body).should == {"code"=>400, "title"=>"Bad Request", "message"=>"Failed to update Request extension: quota_soft cannot be emty"}
+      end
+      
+      it "should update the quota request" do
+        put("/users/crohr/quotas/#{@crohr_rennes.uid}", @valid_attributes.merge(:quota_soft => 60000000, :quota_hard => 135000000).to_json, @valid_headers)
+        last_response.status.should == 200
+        result_up = Grid5000::Quota[@crohr_rennes.uid]
+        result_up.quota_soft.should == 60000000
+        result_up.quota_hard.should == 135000000
+      end
+        
+    end
+    
+    describe "PUT /users/:user_uid/quotas/:request_uid/status" do
+      before do
+        @crohr_rennes = Grid5000::Quota.create(@valid_attributes)
+      end
+      
+      it "should return 404 if the quota request cannot be found" do
+              put "/users/crohr/quotas/5036/status", {:status => "APPROVE"}.to_json, @valid_authentication_headers
+              last_response.status.should == 404
+              JSON.parse(last_response.body).should == {
+                "code"=>404, 
+                "title"=>"Not Found", 
+                "message"=>"Object not found (Quota Request 5036)"
+              }
+       end
+       
+      it "should not allow to approve restore reject a quota request  if requester has standard privilege" do
+        ["APPROVE", "RESTORE", "REJECT"].each do |status|
+        put "/users/crohr/quotas/#{@crohr_rennes.uid}/status", {:status => status}.to_json, @valid_headers.merge('HTTP_X_API_USER_PRIVILEGES' => 'user')
+        last_response.status.should == 403
+        JSON.parse(last_response.body).should == {"code"=>403, "title"=>"Forbidden", "message"=>"You are not allowed to #{status} this request"}
+        end
+      end
+      
+      it "should return 400 if the specified status is not supported" do
+        put "/users/crohr/quotas/#{@crohr_rennes.uid}/status", {:status => "whatever"}.to_json, @valid_authentication_headers
+        last_response.status.should == 400
+        JSON.parse(last_response.body).should == {
+          "code"=>400,
+          "title"=>"Bad Request",
+          "message"=>"Status not allowed"
+        }
+      end
+      it "should set the status to APPROVED when approving a quota request" do
+        put "/users/crohr/quotas/#{@crohr_rennes.uid}/status", {:status => "APPROVE"}.to_json, @valid_authentication_headers
+        last_response.status.should == 200
+        result = JSON.parse(last_response.body)
+        result["status"].should == "APPROVED"
+        Grid5000::Log.all.map(&:message).last.should == "Quota request (user :crohr, site: rennes) is approved"
+      end
+      it "should set the status to REJECTED when rejecting a quota request" do
+        @crohr_rennes.update(:status => "WAITING_FOR_APPROVAL")
+        put("/users/crohr/quotas/#{@crohr_rennes.uid}/status", {:status => "REJECT"}.to_json, @valid_authentication_headers)
+        last_response.status.should == 200
+        result = JSON.parse(last_response.body)
+        result["status"].should == "REJECTED"
+        Grid5000::Log.all.map(&:message).last.should == "Quota request (user: crohr, site: rennes) is rejected"
+      end
+           
+    end
+
+    describe "PUT /sites/:site_uid/quota" do
+      before do
+        @rennes_values = {
+          "rennes" => {
+            :free_space => 213325340,
+            :total_space => 224970156,
+            :used_space => 216980,
+            :users_used_space => {
+              "dmargery" => 20,
+              "crohr" => 20,
+              "bdexheimer" => 20
+            }
+          }
+        }
+      end
+
+      it "should return 404 if the site does not exist" do
+     #   puts @rennes_values.to_json
+        put("/sites/sitedoesnotexist/quota", @rennes_values.to_json, @valid_authentication_headers)
+        last_response.status.should == 404
+      end
+
+      it "should update volume and users storage informations" do 
+        put("/sites/rennes/quota", @rennes_values.to_json, @valid_authentication_headers)
+        last_response.status.should == 200
+      end
+      
+    end
+    
+    describe "DELETE /user/:user_uid/quotas/:request_uid" do
+      
+      before do 
+        @crohr_rennes = Grid5000::Quota.create(@valid_attributes)
+      end
+      it "should return 404 if the quota request cannot be found" do
+        delete "/users/crohr/quotas/3023", {}, @valid_authentication_headers
+        last_response.status.should == 404
+        JSON.parse(last_response.body).should == {
+          "code"=>404,
+          "title"=>"Not Found",
+          "message"=>"Object not found (Quota request 3023)"
+        }
+      end
+      
+      it "should not allow to delete a quota request if the request status is APPROVED" do
+          Grid5000::Quota[@crohr_rennes.uid].approve!
+          delete "/users/crohr/quotas/#{@crohr_rennes.uid}", {}, @valid_headers
+          last_response.status.should == 400
+          JSON.parse(last_response.body).should == {"code"=>400, "title"=>"Bad Request", "message"=>"Status quota request not allowed to delete"}
+      end
+      
+    end
+    
+
+   end
+end
+ 

@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Fhash:</b>
+  <%= @fichier.fhash %>
+</p>
+
+<p>
+  <b>Data:</b>
+  <%= @fichier.data_file_name %>
+</p>
+
+<p>
+  <b>Extension:</b>
+  <%= @fichier.extension %>
+</p>
+
+<p>
+  <b>Type:</b>
+  <%= @fichier.data_content_type %>
+</p>
+
+<p>
+  <b>Size:</b>
+  <%= @fichier.data_file_size %>
+</p>
+
+<p>
+  <b>Tags:</b>
+  <%= @fichier.tags %>
+</p>
+
+
+<%= link_to 'Edit', edit_fichier_path(@fichier) %> |
+<%= link_to 'Back', fichiers_path %>

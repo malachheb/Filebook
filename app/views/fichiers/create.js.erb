@@ -1,0 +1,5 @@
+ <% if @fichier.errors.any? %>
+  $('div#file_modal').html("<%= escape_javascript(render :partial => 'form') %>");
+ <% else %>
+  $('div#file_modal').modal('hide');
+ <% end %>

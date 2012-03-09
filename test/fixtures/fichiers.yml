@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  fhash: MyString
+  name: MyString
+  extension: MyString
+  type: 
+  size: 1
+  tags: MyString
+
+two:
+  fhash: MyString
+  name: MyString
+  extension: MyString
+  type: 
+  size: 1
+  tags: MyString

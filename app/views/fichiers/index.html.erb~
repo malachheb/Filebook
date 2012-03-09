@@ -1,0 +1,35 @@
+<h1>Listing fichiers</h1>
+
+<table class="table table-condensed">
+  <tr>
+    <th>Fhash</th>
+    <th>Name</th>
+    <th>Extension</th>
+    <th>Type</th>
+    <th>Size</th>
+    <th>Tags</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @fichiers.each do |fichier| %>
+  <tr>
+    <td><%= fichier.fhash %></td>
+    <td><%= fichier.data_file_name %></td>
+    <td><%= fichier.extension %></td>
+    <td><%= fichier.data_content_type %></td>
+    <td><%= fichier.data_file_size %></td>
+    <td><%= fichier.tags %></td>
+    <td><%= link_to '<i class="icon-search"/>'.html_safe , fichier, :class => '' %></td>
+    <td><%= link_to 'Edit', edit_fichier_path(fichier) %></td>
+    <td><%= link_to 'Destroy', fichier, :confirm => 'Are you sure?', :method => :delete, :remote=>true, :id => 'delete_fichier' %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Fichier', new_fichier_path, :id => 'new_file', :remote => true %>
+
+<div id="mondialog"></div>

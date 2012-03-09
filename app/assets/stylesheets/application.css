@@ -1,0 +1,49 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require jquery-ui
+ *= require bootstrap
+ *= require_tree .
+*/
+
+.app_top {
+margin: 0 auto;
+width: 944px;
+background: url(/assets/background_app.png) top no-repeat;
+}
+
+.header {
+margin: 0 auto;
+width: 890px;
+height: 88px;
+border-bottom: 1px solid #BBB;
+}
+
+.main_content {
+margin: 0px 20px;
+padding: 30px 20px 20px 0px;
+background: white;
+min-height: 350px;
+}
+
+.app_bottom {
+margin: 0 auto;
+width: 950px;
+height: 50px;
+background: url(/assets/background_app.png) bottom no-repeat;
+}
+
+.footer {
+width: 870px;
+font-size: 11px;
+font-weight: bold;
+margin: 3px auto 20px auto;
+}

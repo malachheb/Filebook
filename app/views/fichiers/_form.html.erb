@@ -1,0 +1,49 @@
+<%= form_for(@fichier, :remote => true) do |f| %>
+  <!-- <% if @fichier.errors.any? %> -->
+  <!--   <div id="error_explanation"> -->
+  <!--     <h2><%= pluralize(@fichier.errors.count, "error") %> prohibited this fichier from being saved:</h2> -->
+
+  <!--     <ul> -->
+  <!--     <% @fichier.errors.full_messages.each do |msg| %> -->
+  <!--       <li><%= msg %></li> -->
+  <!--     <% end %> -->
+  <!--     </ul> -->
+  <!--   </div> -->
+  <!-- <% end %> -->
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <% if @fichier.id.nil? then %>
+    <% name = 'Upload' %>
+    <h3 id="title" >New File</h3>
+    <% else %>
+     <% name = 'Edit' %>
+    <h3 id="title" >Edit File</h3>
+    <% end %>
+  </div>
+  <div class="modal-body">
+    <% if @fichier.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@fichier.errors.count, "error") %> prohibited this fichier from being saved:</h2>
+      <ul>
+	<% @fichier.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+	<% end %>
+      </ul>
+    </div>
+    <% end %>
+    <div class="field">
+      <%= f.label :data %><br />
+      <%= f.file_field :data %>
+    </div>
+    <div class="field">
+      <%= f.label :tags %><br />
+      <%= f.text_field :tags %>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="actions">
+      <%= f.submit name , :class =>'btn btn-primary'%>
+    </div>
+  </div>
+  <% end %>
+
