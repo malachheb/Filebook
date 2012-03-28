@@ -11,7 +11,7 @@
  *= require_self
  *= require jquery-ui
  *= require bootstrap
- *= require_tree .
+ *= require token-input-facebook
 */
 
 .app_top {
@@ -46,4 +46,52 @@ width: 870px;
 font-size: 11px;
 font-weight: bold;
 margin: 3px auto 20px auto;
+}
+
+.widget {
+       background: #FAFAFA;
+       background-color: #FAFAFA;
+       filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E7EEF4');
+       background: -moz-linear-gradient(top, #FAFAFA, #E7EEF4);
+       background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#E7EEF4));
+       height: auto;
+       width: 155px;
+       padding: 5px;
+       border: solid 1px #DCDCDC;
+       border-bottom: solid 1px #98B1C7;
+       -moz-border-radius: .5em;
+       -webkit-border-radius: .5em;
+       -moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+       -webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+       font-size: 10px;
+       font-weight: lighter;
+}
+
+.topic {
+  border-bottom-color:#F0F0F0;
+  border-bottom-style:solid;
+  border-bottom-width:1px;
+  border-top-color:#F0F0F0;
+  border-top-style:solid;
+  border-top-width:1px;
+  font-family:Arial, Helvetica, sans-serif;
+  overflow-x:hidden;
+  overflow-y:hidden;
+  padding-bottom:5px;
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:5px;
+  width:auto;
+}
+
+
+
+ .divider {
+  height: 1px;
+  margin: 5px 1px;
+  overflow: hidden;
+  background-color: #e5e5e5;
+  border-bottom: 1px solid #ffffff;
+  *width: 100%;
+  *margin: -5px 0 5px;
 }

@@ -1,5 +1,17 @@
- <% if @fichier.errors.any? %>
-  $('div#file_modal').html("<%= escape_javascript(render :partial => 'form') %>");
- <% else %>
-  $('div#file_modal').modal('hide');
- <% end %>
+<% unless flash[:notice].blank? %>
+   $('div#flash_content').html("<%= escape_javascript (nice_flash(flash[:notice])) %>");
+<% end %>
+<% unless flash[:error].blank? %>
+   $('div#flash_content').html("<%= escape_javascript (error_flash(flash[:error])) %>");
+<% end %>
+
+<% if @fichier.errors.any? %>
+$('div#file_modal').html("<%= escape_javascript(render :partial => 'form') %>");
+<% else %>
+$('div#file_modal').modal('hide');
+<% if type_render == "post" %>
+$('#files_table').append("<%= escape_javascript(render :partial => 'filerow', :locals => { :fichier => @fichier, :trash => false }) %>");
+<% elsif type_render == "put" %>
+$('tr#file_<%= @fichier.id.to_s %> > td#updated_at').html("<%= escape_javascript(@fichier.updated_at.to_s) %>");
+<% end %>
+<% end %>

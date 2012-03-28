@@ -1,0 +1,9 @@
+<% unless flash[:notice].blank? %>
+   $('div#flash_content').html("<%= escape_javascript (nice_flash(flash[:notice])) %>");
+<% end %>
+<% unless flash[:error].blank? %>
+   $('div#flash_content').html("<%= escape_javascript (error_flash(flash[:error])) %>");
+<% end %>
+
+
+$('div#file_modal').modal('hide');

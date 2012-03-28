@@ -9,7 +9,8 @@ class CreateFichiers < ActiveRecord::Migration
       t.integer :data_file_size
       t.string :tags
       t.string :description
-
+      t.boolean :trash, :default => false
+      t.integer :user_id
       t.timestamps
     end
   end

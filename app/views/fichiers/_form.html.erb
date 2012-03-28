@@ -1,16 +1,5 @@
-<%= form_for(@fichier, :remote => true) do |f| %>
-  <!-- <% if @fichier.errors.any? %> -->
-  <!--   <div id="error_explanation"> -->
-  <!--     <h2><%= pluralize(@fichier.errors.count, "error") %> prohibited this fichier from being saved:</h2> -->
-
-  <!--     <ul> -->
-  <!--     <% @fichier.errors.full_messages.each do |msg| %> -->
-  <!--       <li><%= msg %></li> -->
-  <!--     <% end %> -->
-  <!--     </ul> -->
-  <!--   </div> -->
-  <!-- <% end %> -->
-  <div class="modal-header">
+<%= bootstrap_form_for(@fichier,:format => 'js', :remote => true) do |f| %>
+   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
     <% if @fichier.id.nil? then %>
     <% name = 'Upload' %>
@@ -21,28 +10,9 @@
     <% end %>
   </div>
   <div class="modal-body">
-    <% if @fichier.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@fichier.errors.count, "error") %> prohibited this fichier from being saved:</h2>
-      <ul>
-	<% @fichier.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-	<% end %>
-      </ul>
-    </div>
-    <% end %>
-    <div class="field">
-      <%= f.label :data %><br />
-      <%= f.file_field :data %>
-    </div>
-    <div class="field">
-      <%= f.label :description %><br />
-      <%= f.text_area :description, :cols => "50", :rows => "3" %>
-    </div>
-    <div class="field">
-      <%= f.label :tags %><br />
-      <%= f.text_area :tags, :cols => "50", :rows => "3" %>
-    </div>
+    <%= f.file_field :data %>
+    <%= f.text_area :description, :cols => "60", :rows => "3" %>
+    <%= f.text_area :tags, :cols => "60", :rows => "3"%>
   </div>
   <div class="modal-footer">
     <div class="actions">
@@ -50,4 +20,3 @@
     </div>
   </div>
   <% end %>
-

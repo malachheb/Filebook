@@ -1,0 +1,19 @@
+<h5>Users recommendation</h5>
+<% @users.each do |user| %>
+
+<li class="divider"></li>
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span2">
+       <img style="height: 60px; width: 70px; " src="<%=asset_path "profil.png"%>" alt="profil"/>
+    </div>
+    <div class="span8">
+      <%= user.pseudo %>
+    </div>
+     <div class="span2">
+       <%= link_to 'Following', follow_user_path(user), :remote => true, :class => "btn btn-primary" %>
+       
+     </div>
+  </div>
+</div>
+<% end %>

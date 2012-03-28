@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  owner_id: MyString
+  integer: MyString
+  dest_id: MyString
+  integer: MyString
+  fichier_id: 1
+
+two:
+  owner_id: MyString
+  integer: MyString
+  dest_id: MyString
+  integer: MyString
+  fichier_id: 1

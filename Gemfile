@@ -9,6 +9,9 @@ gem 'sqlite3'
 gem 'mysql'
 gem 'json'
 gem "paperclip", "~> 2.0"
+gem 'remotipart', '~> 1.0'
+gem 'nokogiri'
+gem "bcrypt-ruby", :require => "bcrypt"
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do

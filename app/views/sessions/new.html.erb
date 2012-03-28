@@ -1,0 +1,21 @@
+<%= form_tag(sessions_path) do %>
+   <div class="modal-header">
+     <h3 id="title" >Log in</h3>
+   </div>
+   <div class="modal-body">
+     <p>
+       <%= label_tag :email %>
+       <%= text_field :email, params[:email] %>
+     </p>
+     <p>
+       <%= label_tag :password %>
+       <%= password_field :password, params[:password] %>
+     </p>
+   </div>
+   <div class="modal-footer">
+     <div class="actions">
+       <%= submit_tag 'Submit' , :class =>'btn btn-primary'%>
+     </div>
+   </div>
+<% end %>
+   

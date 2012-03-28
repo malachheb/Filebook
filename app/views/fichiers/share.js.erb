@@ -1,0 +1,6 @@
+$('div#file_modal').html("<%= escape_javascript(render :partial => 'shareform') %>"); 
+$('div#file_modal').modal('show');
+$("input#fichier_myshared_tokens").tokenInput("/users.json", {
+        crossDomain: false,
+	theme: "facebook"
+});

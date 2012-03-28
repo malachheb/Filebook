@@ -2,41 +2,32 @@
 
 <ul class="nav nav-tabs">
   <li class="active">
-    <a href="#"><i class="icon-file"></i>My uploaded</a>
+    <a href="/fichiers/tab?status=uploaded" data-toggle="tab" data-target="#uploaded"><i class="icon-file"></i>My uploaded</a> 
   </li>
-  <li><a href="#"><i class="icon-share"></i>My shared</a>
+  <li>
+    <a href="/fichiers/tab?status=shared" data-toggle="tab" data-target="#shared"><i class="icon-share"></i>My shared</a>
   </li>
-  <li><a href="#"><i class="icon-star"></i>My favoris</a></li>
-  <li><a href="#"> <i class="icon-trash"></i>My trash</a></li>
+  <li><a href="/fichiers/tab?status=favori" data-toggle="tab" data-target="#favoris"><i class="icon-star"></i>My favoris</a></li>
+  <li>
+    <a href="/fichiers/tab?status=trash"  data-toggle="tab" data-target="#trash"> <i class="icon-trash"></i>My trash</a>
+   
+  </li>
 </ul>
 
-<table class="table table-striped table-bordered table-condensed">
-  <tr>
-    <th>Name</th>
-    <th>Type</th>
-    <th>Size</th>
-    <th>Last update</th>
-    <th colspan="3"></th>
-  </tr>
-
-<% @fichiers.each do |fichier| %>
-  <tr>
-    <!-- <td><%= fichier.fhash %></td> -->
-    <td><%= fichier.data_file_name %></td>
-    <!-- <td><%= fichier.extension %></td> -->
-    <td><%= fichier.data_content_type %></td>
-    <td><%= fichier.data_file_size %></td>
-    <td><%= fichier.updated_at %></td>
-    <td><%= link_to '<i class="icon-eye-open"/>'.html_safe , fichier, :class => '', :remote => true %></td>
-    <td><%= link_to '<i class="icon-pencil"/>'.html_safe, edit_fichier_path(fichier), :id => 'edit_file', :remote => true %></td>
-    <td><%= link_to '<i class="icon-trash"/>'.html_safe, fichier, :confirm => 'Are you sure?', :method => :delete, :remote=>true, :id => 'delete_fichier' %></td>
-  </tr>
-<% end %>
-</table>
+<div class="tab-content">
+  <div class="tab-pane active" id="uploaded">
+    <%= render :partial => 'filetable', :locals => { :fichiers => @fichiers, :trash => false, :table_id => 'files_table'} %>
+  </div>
+  <div class="tab-pane" id="shared">my shared</div>
+  <div class="tab-pane" id="favoris">My favoris</div>
+  <div class="tab-pane" id="trash">
+     <%= render :partial => 'filetable', :locals => { :fichiers => @fichiers, :trash => true, :table_id => 'trash_table'} %>
+  </div>
+</div>
 
 <br />
 
 <%= link_to 'New Fichier', new_fichier_path, :id => 'new_file', :remote => true %>
 
-<div class="modal hide" id="file_modal"></div>
-
+   <!-- <%= link_to '<i class="icon-file"></i>My uploaded'.html_safe, tab_fichiers_path(:status => "uploaded"), "data-toggle" => "tab", "data-target" => "uploaded", :remote => true %> -->
+ <!-- <%= link_to '<i class="icon-trash"></i>My trash'.html_safe, tab_fichiers_path(:status => "trash"), "data-toggle" => "tab", :remote => true %> -->

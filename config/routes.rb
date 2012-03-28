@@ -1,6 +1,42 @@
 Filebook::Application.routes.draw do
+  match 'topics/index', :to => 'topics#index' , :as => :topics
+
+  get "topics/index"
+
+  get "topics/show"
+
+  get "topics/comment"
+
+  get "topics/like"
+
+  get "home/index"
+
+  # get "sessions/new"
+
+  # get "users/new"
+  
+  get "users/find", :to => 'users#find', :as => :users_find
+  
+ 
+
+  match 'fichiers/tab', :to => 'fichiers#tab', :as => :tab_fichiers
   resources :fichiers
 
+  match 'fichiers/trash/:id', :to => 'fichiers#trash' , :as => :trash_fichier
+  match 'fichiers/restore/:id', :to => 'fichiers#restore', :as => :restore_fichier
+  match 'fichiers/download/:id', :to => 'fichiers#download', :as => :download_fichier
+  match 'fichiers/favori/:id', :to =>   'fichiers#favori', :as => :favori_fichier
+  match 'fichiers/share/:id', :to => 'fichiers#share', :as => :share_fichier
+  match 'fihciers/sharing/:id', :to => 'fichiers#sharing', :as => :sharing_fichier
+
+  get "log_out" => "sessions#destroy", :as => "log_out"
+  get "log_in" => "sessions#new", :as => "log_in"
+  get "sign_up" => "users#new", :as => "sign_up"
+  resources :users
+  resources :sessions
+  root :to => "home#index"
+
+  match 'users/follow/:id', :to => 'users#follow', :as => :follow_user
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

@@ -2852,7 +2852,7 @@ button.btn.small, input[type="submit"].btn.small {
   z-index: 2050;
 }
 .modal-open .dropdown.open {
-  *z-index: 2050;
+  z-index: 2050;
 }
 .modal-open .popover {
   z-index: 2060;

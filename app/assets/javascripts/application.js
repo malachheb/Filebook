@@ -14,15 +14,40 @@
 //= require jquery_ujs
 //= require jquery-ui
 //= require bootstrap-modal
-//= require_tree .
+//= require bootstrap-tab
+//= require bootstrap-alert
+//= require bootstrap-dropdown
+//= require jquery.remotipart
+//= require jquery.tokeninput
 
 $(document).ready(function() {
-    $('#mondialog').dialog({ autoOpen: false, title: "Add new file" });
+      
+    // $("input#email_").tokenInput("/users.json", {
+    //     crossDomain: false,
+    // 	theme: "facebook"
+    // });
 });
+
+$('a[data-toggle="tab"]').live('shown', function (e) {
+    div = $(this).attr('data-target');
+    url = e.target;
+     $('div'+div).load(''+url);
+   //e.relatedTarget; // previous tab
+});
+
+$('#trash_fichier').live('ajax:success', function(evt, data, status, xhr) {  
+     $(this).closest('tr').fadeOut();  
+});
+
 $('#delete_fichier').live('ajax:success', function(evt, data, status, xhr) {  
      $(this).closest('tr').fadeOut();  
 });
 
-$("#delete_fichier").bind("ajax:error", function() {
+$('#restore_fichier').live('ajax:success', function(evt, data, status, xhr) {  
+     $(this).closest('tr').fadeOut();  
+});
+
+
+$("#trash_fichier").bind("ajax:error", function() {
     console.log("ajax:error");
 });

@@ -1,0 +1,6 @@
+<% if status == "uploaded" %>
+escape_javascript( render :partial => 'filetable', :locals => {:fichiers => @fichiers, :trash => false, :table_id => 'files_table'});
+
+<% elsif status == "trash" %>
+$('div#trash').html("<%= escape_javascript( render :partial => 'filetable', :locals => {:fichiers => @fichiers, :trash => true, :table_id => 'trash_table'}) %>");
+<% end %>

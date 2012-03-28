@@ -1,0 +1,14 @@
+<%= form_for(@fichier, :url => sharing_fichier_path(@fichier),:format => 'js', :remote => true) do |f| %>
+   <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3 id="title" >Share File</h3>
+   </div>
+  <div class="modal-body">
+    <%= f.text_field :myshared_tokens %>
+  </div>
+  <div class="modal-footer">
+    <div class="actions">
+      <%= f.submit 'Share' , :class =>'btn btn-primary'%>
+    </div>
+  </div>
+  <% end %>
