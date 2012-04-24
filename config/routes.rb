@@ -5,19 +5,16 @@ Filebook::Application.routes.draw do
 
   get "topics/show"
 
-  get "topics/comment"
+  match "topics/comment/:id", :to => 'topics#comment', :as => :topic_comment
 
   get "topics/like"
 
   get "home/index"
 
-  # get "sessions/new"
-
-  # get "users/new"
-  
   get "users/find", :to => 'users#find', :as => :users_find
-  
- 
+  get "users/following", :to => 'users#following', :as => :users_following
+  get "users/followers", :to => 'users#followers', :as => :users_followers
+
 
   match 'fichiers/tab', :to => 'fichiers#tab', :as => :tab_fichiers
   resources :fichiers
@@ -34,9 +31,13 @@ Filebook::Application.routes.draw do
   get "sign_up" => "users#new", :as => "sign_up"
   resources :users
   resources :sessions
+
   root :to => "home#index"
 
   match 'users/follow/:id', :to => 'users#follow', :as => :follow_user
+  match 'users/unfollow/:id', :to => 'users#unfollow', :as => :unfollow_user 
+ 
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

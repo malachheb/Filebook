@@ -1,14 +1,14 @@
 <% @topics.each do |topic| %>
 
-<div class="topic" style="font-weight:bold;">
+<div class="topic" style="">
   <div class="avatar" style="float: left">
     <img style="height: 40px; width: 40px; " src="<%=asset_path "profil.png"%>" alt="profil"/>
   </div>
   <div class="user" style="position: absolute; padding-left: 5em;  font-weight:bold ">
-    <i>  malachheb </i>
+    <i> <%= topic.user.pseudo %> </i>
   </div>
   <div class="time" style="position: absolute; padding-left: 42em;;">
-    12:13 PM
+    <%= time_ago_in_words(topic.created_at) %> ago
   </div>
   <br>
   <div class="text" style="position: absolute; padding-left: 5em;  font-weight:bold">
@@ -16,28 +16,12 @@
   </div>
   <br><br>
   <div class="social">
-    <h5><i><a href="#"> like </a><a href="#">comment</a></i></h5>
-    <div class="widget" style="width:450px;">
-      <div class="caption">
-	<h5>ramzi  12:45</h5>
-	hadhi el fichier eli 7kitlek 3liha
-	<li class="divider"></li>
-	<h5>mourad  12:45</h5>
-	mmmmmmm hayel barch  ;)
-	<li class="divider"></li>
-	<div class="row">
-	  <div class="span4">
-	    <textarea rows="2" cols="60"> Your comment her </textarea>
-	  </div>
-	</div>
-	<div class="row">
-	  <div class="span2 offset2">
-	    <button class="btn btn-mini btn-primary">Comment</button>
-	  </div>
-	</div>
-      </div>
+    <a class="txt" href="#"> like </a>
+    <a class="txt" href="#">comment</a>
+    <div id="comments-topic-<%= topic.id %>">
+      <%= render :partial => 'comment', :locals => { :topic => topic} %>
     </div>
-  </div> 
+   </div> 
 </div>
   
  <% end %>

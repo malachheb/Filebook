@@ -10,7 +10,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120324142632) do
+ActiveRecord::Schema.define(:version => 20120411142851) do
+
+  create_table "comments", :force => true do |t|
+    t.integer  "topic_id"
+    t.integer  "user_id"
+    t.text     "content"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "favoris", :id => false, :force => true do |t|
     t.integer "user_id"

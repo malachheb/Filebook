@@ -13,10 +13,10 @@ class User < ActiveRecord::Base
   has_many :myfavoris, :through => :favoris, :source => :fichier
 
   has_many :follows_from, :foreign_key => "userfrom_id", :class_name => "Follow"
-  has_many :following, :through => :follows_from, :source => :user
+  has_many :following, :through => :follows_from, :source => :userto
 
   has_many :follows_to, :foreign_key => "userto_id", :class_name => "Follow"
-  has_many :followers, :through => :follows_to, :source => :user
+  has_many :followers, :through => :follows_to, :source => :userfrom
   
   attr_accessible :email, :password, :password_confirmation, :pseudo, :first_name, :last_name
   
@@ -29,10 +29,10 @@ class User < ActiveRecord::Base
   validates_presence_of :password, :on => :create
   validates_presence_of :email
   validates_uniqueness_of :email
-  
+ 
   def self.authenticate(email, password)
-    user = find_by_email(email)
-    if user && user.password_hash == BCrypt::Engine.hash_secret(password, user.password_salt)
+    user = self.find_by_email(email)
+    if user #and (user.password_hash == BCrypt::Engine.hash_secret(password, user.password_salt))
       user
     else
       nil

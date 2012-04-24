@@ -1,0 +1,1 @@
+$('div#comments-topic-<%= @topic.id %>').html("<%= escape_javascript(render :partial => 'comment',  :locals => { :topic => @topic}) %>"); 

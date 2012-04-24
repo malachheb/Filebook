@@ -29,28 +29,45 @@ class UsersController < ApplicationController
   # Get /users
   # Find users to follow
   def find
-    @users = User.all
+    @users = User.where("id != ?", current_user.id)
+    @users = @users - current_user.following
+    respond_to do  |format|
+      format.html
+    end
+  end
+
+
+  def following
+    @users =  current_user.following
+    respond_to do  |format|
+      format.html
+    end
+  end
+
+  def followers
+    @users =  current_user.followers
     respond_to do  |format|
       format.html
     end
   end
 
   def follow
-    @user = User.find(params[:id]).where
+    @user = User.find(params[:id])
     Follow.create(:userfrom => current_user, :userto => @user)
+    flash[:notice] = "Your are now Following the user #{@user.pseudo}"
     respond_to do |format|
-      format.js { render :nothing => true }  
+      #format.js { render :nothing => true }  
+      format.js   { render :action => "follow" }
     end
   end
 
-
-
-  # def showtopics
-  #   @topics = current_user.topics
-  #   respond_to do |format|
-  #     format.html
-  #   end
-
-  # end
+  def unfollow
+    @user = User.find(params[:id])
+    current_user.following.delete(@user)
+    flash[:notice] = "your are now Unfollowing the user #{@user.pseudo}"
+    respond_to do |format|
+      format.js { render :action => "unfollow" }  
+    end
+  end
 
 end

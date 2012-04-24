@@ -1,0 +1,12 @@
+<% unless flash[:notice].blank? %>
+   $('div#flash_content').html("<%= escape_javascript (nice_flash(flash[:notice])) %>");
+<% end %>
+<% unless flash[:error].blank? %>
+   $('div#flash_content').html("<%= escape_javascript (error_flash(flash[:error])) %>");
+<% end %>
+
+var href_follow = $("a[href='<%= follow_user_path(@user) %>']");
+href_follow.attr("class", "btn btn-danger");
+href_follow.html("Unfollow");
+href_follow.attr("href", "<%= unfollow_user_path(@user) %>");
+$("td#user_following").html("<%= escape_javascript(link_to 'Following', users_following_path) %> <br><%= current_user.following.size %>");
